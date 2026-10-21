@@ -1,5 +1,68 @@
-// Meu Clima - Parte 1: pesquisa de cidades, previsão do tempo e qualidade do ar.
-// Parte 2: a API de logs será integrada após a conclusão da Parte 1.
+// Meu Clima - Partes 1 e 2: consultas meteorológicas e histórico de logs.
+
+// SUBSTITUA pela sua matrícula acadêmica antes de publicar.
+const MATRICULA = '468866';
+const API_LOGS = 'https://www.piway.com.br/unoesc/api';
+
+async function registrarLog(api, metodo, resultado) {
+  if (MATRICULA === '468866') return;
+  const partes = [MATRICULA, api, metodo, String(resultado)].map(encodeURIComponent);
+  try {
+    const resposta = await fetch(`${API_LOGS}/inserir/log/${partes.join('/')}`);
+    if (!resposta.ok) throw new Error('Erro ao registrar log');
+  } catch (erro) {
+    console.error('Não foi possível registrar o log:', erro);
+  }
+}
+
+function obterIdLog(log) {
+  return log.id ?? log.idlog ?? log.id_log ?? log.IDLOG ?? log.ID ?? null;
+}
+
+async function exibirLogs() {
+  const lista = document.getElementById('listaLogs');
+  lista.textContent = 'Carregando histórico...';
+  if (MATRICULA === 'COLOQUE_SUA_MATRICULA_AQUI) {
+    lista.textContent = 'Configure sua matrícula no script.js.';
+    return;
+  }
+  try {
+    const resposta = await fetch(`${API_LOGS}/logs/${encodeURIComponent(MATRICULA)}`);
+    if (!resposta.ok) throw new Error('Não foi possível consultar os logs.');
+    const dados = await resposta.json();
+    const logs = Array.isArray(dados) ? dados : (dados.logs || dados.data || dados.resultado || []);
+    if (!Array.isArray(logs)) throw new Error('Formato de resposta inesperado.');
+    lista.replaceChildren();
+    if (!logs.length) { lista.textContent = 'Nenhum log registrado.'; return; }
+    for (const log of logs) {
+      const linha = document.createElement('div');
+      linha.className = 'border rounded p-3 mb-2';
+      const texto = document.createElement('div');
+      texto.className = 'small mb-2';
+      texto.textContent = typeof log === 'object' ? Object.entries(log).map(([chave, valor]) => `${chave}: ${valor}`).join(' | ') : String(log);
+      linha.appendChild(texto);
+      const id = typeof log === 'object' ? obterIdLog(log) : null;
+      if (id != null) {
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'btn btn-outline-danger btn-sm';
+        botao.textContent = 'Excluir';
+        botao.addEventListener('click', () => excluirLog(id));
+        linha.appendChild(botao);
+      }
+      lista.appendChild(linha);
+    }
+  } catch (erro) { lista.textContent = erro.message; }
+}
+
+async function excluirLog(id) {
+  try {
+    const url = `${API_LOGS}/excluir/log/${encodeURIComponent(id)}/aluno/${encodeURIComponent(MATRICULA)}`;
+    const resposta = await fetch(url);
+    if (!resposta.ok) throw new Error('Não foi possível excluir o log.');
+    await exibirLogs();
+  } catch (erro) { alert(erro.message); }
+}
 
 let cidadeAtual = null;
 const listaCidades = document.getElementById('listaCidades');
@@ -19,6 +82,24 @@ async function consultarAPI(url) {
   if (!resposta.ok) throw new Error(`Falha na consulta (HTTP ${resposta.status}).`);
   const dados = await resposta.json();
   if (dados.error) throw new Error(dados.reason || 'Erro na API.');
+  // O registro ocorre após a resposta bem-sucedida da API principal.
+  const caminho = new URL(url);
+  let metodo = 'Consulta';
+  let resultadoLog = 'Resposta recebida';
+  if (caminho.hostname.startsWith('geocoding')) {
+    metodo = 'Geocoding';
+    resultadoLog = `${(dados.results || []).length} cidades encontradas`;
+  } else if (caminho.hostname.startsWith('air-quality')) {
+    metodo = 'Qualidade do ar';
+    resultadoLog = `AQI ${dados.current?.european_aqi ?? 'indisponivel'}`;
+  } else if (caminho.searchParams.has('daily')) {
+    metodo = 'Previsao 5 dias';
+    resultadoLog = `${dados.daily?.time?.length || 0} dias`;
+  } else {
+    metodo = 'Clima atual';
+    resultadoLog = `Temperatura ${dados.current?.temperature_2m ?? 'indisponivel'} C`;
+  }
+  await registrarLog('Open-Meteo', metodo, resultadoLog);
   return dados;
 }
 
@@ -270,3 +351,6 @@ document.getElementById('formComparar').addEventListener('submit', async functio
     avisar('Selecione a cidade para comparar.', 'success');
   } catch (erro) { avisar(erro.message, 'danger'); }
 });
+
+// Histórico da Parte 2.
+document.getElementById('btnLogs').addEventListener('click', exibirLogs);
