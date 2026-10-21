@@ -1,0 +1,38 @@
+body {
+    background: #f3f6fa;
+    color: #203049;
+    font-family: Arial, sans-serif;
+}
+
+.cabecalho {
+    background: #194d8c;
+    color: white;
+}
+
+.card {
+    border: 1px solid #e1e6ee;
+    border-radius: 12px;
+}
+
+.btn-primary {
+    background: #194d8c;
+    border-color: #194d8c;
+}
+
+.dado {
+    background: #f5f8fc;
+    border: 1px solid #e1e6ee;
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+}
+
+.dado strong {
+    display: block;
+    font-size: 1.4rem;
+    margin-top: 6px;
+}
+
+footer {
+    border-top: 1px solid #e1e6ee;
+}

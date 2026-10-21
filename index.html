@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meu Clima | Planejador do Dia</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="cabecalho py-4 mb-4">
+    <div class="container">
+      <p class="mb-1 small"></p>
+      <h1>Meu Clima</h1>
+      <p class="mb-0">Consulte o tempo e planeje seu dia.</p>
+    </div>
+  </header>
+
+  <main class="container pb-5">
+    <section class="card p-4 mb-3">
+      <h2 class="h5">1. Escolha uma cidade</h2>
+      <form id="formCidade" class="row g-2 mt-1">
+        <div class="col-md-9">
+          <label for="cidade" class="form-label">Nome da cidade</label>
+          <input id="cidade" class="form-control" placeholder="Ex.: Chapecó, Curitiba" minlength="2" required>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit">Buscar cidade</button>
+        </div>
+      </form>
+      <button id="btnChapeco" class="btn btn-outline-secondary btn-sm mt-3 align-self-start" type="button">Usar
+        Chapecó</button>
+      <div id="listaCidades" class="row g-2 mt-2"></div>
+      <p id="cidadeSelecionada" class="mt-3 mb-0 fw-semibold">Nenhuma cidade selecionada.</p>
+    </section>
+
+    <section class="card p-4 mb-3">
+      <h2 class="h5">2. O que você deseja consultar?</h2>
+      <div class="row g-2 mt-1">
+        <div class="col-sm-6 col-lg-3"><button id="btnAtual" class="btn btn-outline-primary w-100" type="button"
+            disabled>Clima atual</button></div>
+        <div class="col-sm-6 col-lg-3"><button id="btnPrevisao" class="btn btn-outline-primary w-100" type="button"
+            disabled>Próximos 5 dias</button></div>
+        <div class="col-sm-6 col-lg-3"><button id="btnAr" class="btn btn-outline-primary w-100" type="button"
+            disabled>Qualidade do ar</button></div>
+        <div class="col-sm-6 col-lg-3"><button id="btnComparar" class="btn btn-outline-primary w-100" type="button"
+            disabled>Comparar cidades</button></div>
+      </div>
+      <p class="text-secondary small mt-3 mb-0">A consulta é realizada somente quando você escolhe uma opção.</p>
+    </section>
+
+    <div id="mensagem" class="alert alert-info" role="status" aria-live="polite">Selecione uma cidade para começar.
+    </div>
+
+    <section id="resultado" class="card p-4 d-none" aria-live="polite">
+      <h2 id="tituloResultado" class="h4 mb-3"></h2>
+      <div id="conteudoResultado"></div>
+    </section>
+
+    <section id="secaoComparar" class="card p-4 d-none">
+      <h2 class="h5">Comparar com outra cidade</h2>
+      <p class="text-secondary small">A primeira cidade é a que você selecionou acima.</p>
+      <form id="formComparar" class="row g-2">
+        <div class="col-md-9">
+          <label for="segundaCidade" class="form-label">Segunda cidade</label>
+          <input id="segundaCidade" class="form-control" placeholder="Ex.: Florianópolis" minlength="2" required>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit">Pesquisar</button>
+        </div>
+      </form>
+      <div id="opcoesComparar" class="row g-2 mt-2"></div>
+    </section>
+  </main>
+
+  <footer class="text-center text-secondary small py-4">
+    Amanda Caroline Furquim | UNOESC<br>
+    Dados: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>
+  </footer>
+  <script src="script.js"></script>
+</body>
+
+</html>
