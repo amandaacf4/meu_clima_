@@ -5,7 +5,7 @@ const MATRICULA = '468866';
 const API_LOGS = 'https://www.piway.com.br/unoesc/api';
 
 async function registrarLog(api, metodo, resultado) {
-  if (MATRICULA === '468866') return;
+  if (MATRICULA === 'COLOQUE_SUA_MATRICULA_AQUI') return;
   const partes = [MATRICULA, api, metodo, String(resultado)].map(encodeURIComponent);
   try {
     const resposta = await fetch(`${API_LOGS}/inserir/log/${partes.join('/')}`);
@@ -20,39 +20,41 @@ function obterIdLog(log) {
 }
 
 async function exibirLogs() {
-  const lista = document.getElementById('listaLogs');
+   const lista = document.getElementById('listaLogs');
   lista.textContent = 'Carregando histórico...';
-  if (MATRICULA === 'COLOQUE_SUA_MATRICULA_AQUI) {
+
+  if (MATRICULA === 'COLOQUE_SUA_MATRICULA_AQUI') {
     lista.textContent = 'Configure sua matrícula no script.js.';
     return;
   }
+
   try {
-    const resposta = await fetch(`${API_LOGS}/logs/${encodeURIComponent(MATRICULA)}`);
-    if (!resposta.ok) throw new Error('Não foi possível consultar os logs.');
-    const dados = await resposta.json();
-    const logs = Array.isArray(dados) ? dados : (dados.logs || dados.data || dados.resultado || []);
-    if (!Array.isArray(logs)) throw new Error('Formato de resposta inesperado.');
-    lista.replaceChildren();
-    if (!logs.length) { lista.textContent = 'Nenhum log registrado.'; return; }
-    for (const log of logs) {
-      const linha = document.createElement('div');
-      linha.className = 'border rounded p-3 mb-2';
-      const texto = document.createElement('div');
-      texto.className = 'small mb-2';
-      texto.textContent = typeof log === 'object' ? Object.entries(log).map(([chave, valor]) => `${chave}: ${valor}`).join(' | ') : String(log);
-      linha.appendChild(texto);
-      const id = typeof log === 'object' ? obterIdLog(log) : null;
-      if (id != null) {
-        const botao = document.createElement('button');
-        botao.type = 'button';
-        botao.className = 'btn btn-outline-danger btn-sm';
-        botao.textContent = 'Excluir';
-        botao.addEventListener('click', () => excluirLog(id));
-        linha.appendChild(botao);
-      }
-      lista.appendChild(linha);
+  const resposta = await fetch(`${API_LOGS}/logs/${encodeURIComponent(MATRICULA)}`);
+  if (!resposta.ok) throw new Error('Não foi possível consultar os logs.');
+  const dados = await resposta.json();
+  const logs = Array.isArray(dados) ? dados : (dados.logs || dados.data || dados.resultado || []);
+  if (!Array.isArray(logs)) throw new Error('Formato de resposta inesperado.');
+  lista.replaceChildren();
+  if (!logs.length) { lista.textContent = 'Nenhum log registrado.'; return; }
+  for (const log of logs) {
+    const linha = document.createElement('div');
+    linha.className = 'border rounded p-3 mb-2';
+    const texto = document.createElement('div');
+    texto.className = 'small mb-2';
+    texto.textContent = typeof log === 'object' ? Object.entries(log).map(([chave, valor]) => `${chave}: ${valor}`).join(' | ') : String(log);
+    linha.appendChild(texto);
+    const id = typeof log === 'object' ? obterIdLog(log) : null;
+    if (id != null) {
+      const botao = document.createElement('button');
+      botao.type = 'button';
+      botao.className = 'btn btn-outline-danger btn-sm';
+      botao.textContent = 'Excluir';
+      botao.addEventListener('click', () => excluirLog(id));
+      linha.appendChild(botao);
     }
-  } catch (erro) { lista.textContent = erro.message; }
+    lista.appendChild(linha);
+  }
+} catch (erro) { lista.textContent = erro.message; }
 }
 
 async function excluirLog(id) {
